@@ -10,7 +10,7 @@ const getTodaysWithdrawlTotal = async (accountID: string) => {
     [accountID]
   );
 
-  return res.rows[0].total;
+  return Number(res.rows[0].total);
 };
 
 export const withdrawal = async (accountID: string, amount: number) => {
@@ -24,11 +24,19 @@ export const withdrawal = async (accountID: string, amount: number) => {
 
   const todaysWithdrawlTotal = await getTodaysWithdrawlTotal(accountID);
 
-  if (amount + todaysWithdrawlTotal > 400) {
+  console.log(amount)
+  console.log(todaysWithdrawlTotal)
+  console.log(amount + todaysWithdrawlTotal);
+
+  if ((amount + todaysWithdrawlTotal) > 400) {
     throw new Error("Cannot withdraw more than $400 per day")
   }
 
   const account = await getAccount(accountID);
+
+  if (!account.credit_limit && amount > account.amount) {
+    throw new Error("Cannot withdraw more money than you have")
+  }
 
   account.amount -= amount;
 
