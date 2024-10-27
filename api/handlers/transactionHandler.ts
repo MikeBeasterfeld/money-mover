@@ -38,6 +38,10 @@ export const withdrawal = async (accountID: string, amount: number) => {
     throw new Error("Cannot withdraw more money than you have")
   }
 
+  if (!!account.credit_limit && account.amount - amount < -account.credit_limit) {
+    throw new Error(`Cannot withdraw more than your credit limit of ${account.credit_limit}`)
+  }
+
   account.amount -= amount;
 
   const res = await query(`
