@@ -28,3 +28,15 @@ VALUES
     (3, 'Jills Credit', -3000, 'credit', 10000),
     (6, 'Bills Credit', -60000, 'credit', 60000),
     (9, 'Nancy Credit', -90000, 'credit', 100000);
+
+
+DROP TABLE IF EXISTS transactions;
+CREATE TABLE transactions (
+    account_number INTEGER NOT NULL,
+    amount INTEGER,
+    date TIMESTAMP,
+    CONSTRAINT transactions_fk_accounts
+      FOREIGN KEY(account_number)
+        REFERENCES accounts(account_number)
+);
+
