@@ -18,6 +18,10 @@ export const withdrawal = async (accountID: string, amount: number) => {
     throw new Error("Cannot withdraw more than $200 in one transaction");
   }
 
+  if (amount % 5 !== 0) {
+    throw new Error("You can only withdraw in increments of 5");
+  }
+
   const todaysWithdrawlTotal = await getTodaysWithdrawlTotal(accountID);
 
   if (amount + todaysWithdrawlTotal > 400) {
