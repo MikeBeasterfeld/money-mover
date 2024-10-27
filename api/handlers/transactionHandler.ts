@@ -1,13 +1,33 @@
 import { query } from "../utils/db";
 import { getAccount } from "./accountHandler";
 
+const getTodaysWithdrawlTotal = async (accountID: string) => {
+  const res = await query(`
+    SELECT COUNT(amount) as total
+    FROM transaction 
+    WHERE account_number = $1
+    AND amount < 0`,
+    [accountID]
+  );
+
+  return res.rows[0].total;
+};
+
 export const withdrawal = async (accountID: string, amount: number) => {
   if (amount > 200) {
     throw new Error("Cannot withdraw more than $200 in one transaction");
   }
 
+  const todaysWithdrawlTotal = await getTodaysWithdrawlTotal(accountID);
+
+  if (amount + todaysWithdrawlTotal > 400) {
+    throw new Error("Cannot withdraw more than $400 per day")
+  }
+
   const account = await getAccount(accountID);
+
   account.amount -= amount;
+
   const res = await query(`
     UPDATE accounts
     SET amount = $1 

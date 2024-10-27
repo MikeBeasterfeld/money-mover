@@ -34,9 +34,15 @@ DROP TABLE IF EXISTS transaction;
 CREATE TABLE transaction (
     account_number INTEGER NOT NULL,
     amount INTEGER,
-    date TIMESTAMP,
+    date TIMESTAMP NOT NULL
+      DEFAULT current_timestamp,
     CONSTRAINT transactions_fk_accounts
       FOREIGN KEY(account_number)
         REFERENCES accounts(account_number)
 );
 
+INSERT INTO transaction
+    (account_number, amount)
+VALUES
+    (1, -300),
+    (1, -300)
