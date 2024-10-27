@@ -30,8 +30,8 @@ VALUES
     (9, 'Nancy Credit', -90000, 'credit', 100000);
 
 
-DROP TABLE IF EXISTS transactions;
-CREATE TABLE transactions (
+DROP TABLE IF EXISTS transaction;
+CREATE TABLE transaction (
     account_number INTEGER NOT NULL,
     amount INTEGER,
     date TIMESTAMP,

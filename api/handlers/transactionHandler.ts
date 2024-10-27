@@ -2,6 +2,10 @@ import { query } from "../utils/db";
 import { getAccount } from "./accountHandler";
 
 export const withdrawal = async (accountID: string, amount: number) => {
+  if (amount > 200) {
+    throw new Error("Cannot withdraw more than $200 in one transaction");
+  }
+
   const account = await getAccount(accountID);
   account.amount -= amount;
   const res = await query(`
