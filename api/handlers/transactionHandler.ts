@@ -59,6 +59,10 @@ export const withdrawal = async (accountID: string, amount: number) => {
 }
 
 export const deposit = async (accountID: string, amount: number) => {
+  if (amount > 1000) {
+    throw new Error("Cannot deposit more than $1000 in one transaction");
+  }
+
   const account = await getAccount(accountID);
   account.amount += amount;
   const res = await query(`
