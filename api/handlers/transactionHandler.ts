@@ -3,10 +3,10 @@ import { getAccount } from "./accountHandler";
 
 const getTodaysWithdrawlTotal = async (accountID: string) => {
   const res = await query(`
-    SELECT COUNT(amount) as total
+    SELECT SUM(amount) as total
     FROM transaction 
     WHERE account_number = $1
-    AND amount < 0`,
+    AND amount > 0`,
     [accountID]
   );
 
@@ -24,9 +24,9 @@ export const withdrawal = async (accountID: string, amount: number) => {
 
   const todaysWithdrawlTotal = await getTodaysWithdrawlTotal(accountID);
 
-  console.log(amount)
-  console.log(todaysWithdrawlTotal)
-  console.log(amount + todaysWithdrawlTotal);
+  console.log("amount", amount)
+  console.log("totalToday", todaysWithdrawlTotal)
+  console.log("combined", amount + todaysWithdrawlTotal);
 
   if ((amount + todaysWithdrawlTotal) > 400) {
     throw new Error("Cannot withdraw more than $400 per day")
@@ -52,6 +52,17 @@ export const withdrawal = async (accountID: string, amount: number) => {
   );
 
   if (res.rowCount === 0) {
+    throw new Error("Transaction failed");
+  }
+
+  const transaction = await query(`
+    INSERT INTO transaction
+    (account_number, amount)
+    VALUES ($1, $2)`,
+    [accountID, amount]
+  );
+
+  if (transaction.rowCount === 0) {
     throw new Error("Transaction failed");
   }
 
