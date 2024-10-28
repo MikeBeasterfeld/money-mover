@@ -65,6 +65,11 @@ export const deposit = async (accountID: string, amount: number) => {
 
   const account = await getAccount(accountID);
   account.amount += amount;
+
+  if (!!account.credit_limit && account.amount > 0) {
+    throw new Error("Cannot deposit more than is needed to pay your full balance")
+  }
+
   const res = await query(`
     UPDATE accounts
     SET amount = $1 
